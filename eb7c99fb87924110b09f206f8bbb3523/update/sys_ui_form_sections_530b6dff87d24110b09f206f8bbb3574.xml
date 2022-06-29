@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_form_sections form_id="530b6dff87d24110b09f206f8bbb3574" sys_domain="global" table="x_777497_innovate_innovate" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-03-24 15:29:16</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>d70b6dff87d24110b09f206f8bbb3576</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_777497_innovate_innovate" name="x_777497_innovate_innovate" sys_domain="global" view="7966be310a0a0b8c00bd504090503227">530b6dff87d24110b09f206f8bbb3574</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_777497_innovate_innovate" sys_domain="global" view="7966be310a0a0b8c00bd504090503227">130b6dff87d24110b09f206f8bbb350f</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-03-24 15:29:16</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-03-24 15:29:16</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>930b6dff87d24110b09f206f8bbb3577</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_777497_innovate_innovate" name="x_777497_innovate_innovate" sys_domain="global" view="7966be310a0a0b8c00bd504090503227">530b6dff87d24110b09f206f8bbb3574</sys_ui_form>
+            <sys_ui_section caption="My Idea" display_value="My Idea" name="x_777497_innovate_innovate" sys_domain="global" view="7966be310a0a0b8c00bd504090503227">930b6dff87d24110b09f206f8bbb3573</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-03-24 15:29:16</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_777497_innovate_innovate</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-03-24 15:29:16</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>530b6dff87d24110b09f206f8bbb3574</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_777497_innovate_innovate</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+            <sys_update_name>sys_ui_form_sections_530b6dff87d24110b09f206f8bbb3574</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-03-24 15:29:16</sys_updated_on>
+            <sys_user/>
+            <view display_value="Advanced" name="advanced">7966be310a0a0b8c00bd504090503227</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>
