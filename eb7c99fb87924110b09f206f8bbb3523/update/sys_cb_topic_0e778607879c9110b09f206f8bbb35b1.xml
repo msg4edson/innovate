@@ -19,7 +19,7 @@
         <expose_on_palette>false</expose_on_palette>
         <flexible_conversation_switching>true</flexible_conversation_switching>
         <graph>{
-  "graph_api_version": "1.0.39",
+  "graph_api_version": "1.0.41",
   "goals": {
     "primary": {
       "id": "primary",
@@ -53,53 +53,32 @@
           "stepType": "TextOutput",
           "name": "user Input",
           "secure": false,
-          "value": {
-            "value": "(function execute() {\n\n    //Get hour users local time\n    var gt = new GlideDateTime().getLocalTime().getDisplayValue();\n    gt = gt.split(':')[0];\n    //Set greeting message\n    // 13\n    // if (gt &lt; 7) {\n    if (gt &lt; 4) {\n        answer = gs.getMessage('Good morning');\n        // } else if (gt &gt;= 7 &amp;&amp; gt &lt; 12) {\n    } else if (gt &gt;= 4 &amp;&amp; gt &lt; 9) {\n        answer = gs.getMessage('Good morning');\n        // } else if (gt &gt;= 12 &amp;&amp; gt &lt; 18) {\n    } else if (gt &gt;= 9 &amp;&amp; gt &lt; 15) {\n        answer = gs.getMessage('Good afternoon');\n        // } else if (gt &gt;= 18) {\n    } else if (gt &gt;= 15) {\n        answer = gs.getMessage('Good nigth');\n    }\n    var lang = vaContext.getRequesterLang();\n    if (lang == 'en' || lang == 'En') {\n        var allAnswers = [\n            \"glad to see you.\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n    } else if (lang == 'es' || lang == 'Es') {\n        var allAnswers = [\n            \"encantada de verte\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n    } else {\n        var allAnswers = [\n            \"estou feliz em te ver por aqui.\",\n            \"que bom te ver\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n\n    }\n\n    //Return message\n    if (vaInputs.user.first_name) {\n        return answer + ' ' + vaInputs.user.first_name + ' ' + vaAnswer;\n    } else {\n        return answer + ' ' + vaAnswer;\n    }\n})()\n",
-            "mode": "script"
-          },
+          "value": [
+            {
+              "value": "(function execute() {\n\n    //Get hour users local time\n    var gt = new GlideDateTime().getLocalTime().getDisplayValue();\n    gt = gt.split(':')[0];\n    //Set greeting message\n    // 13\n    // if (gt &lt; 7) {\n    if (gt &lt; 4) {\n        answer = gs.getMessage('Good morning');\n        // } else if (gt &gt;= 7 &amp;&amp; gt &lt; 12) {\n    } else if (gt &gt;= 4 &amp;&amp; gt &lt; 9) {\n        answer = gs.getMessage('Good morning');\n        // } else if (gt &gt;= 12 &amp;&amp; gt &lt; 18) {\n    } else if (gt &gt;= 9 &amp;&amp; gt &lt; 15) {\n        answer = gs.getMessage('Good afternoon');\n        // } else if (gt &gt;= 18) {\n    } else if (gt &gt;= 15) {\n        answer = gs.getMessage('Good nigth');\n    }\n    var lang = vaContext.getRequesterLang();\n    if (lang == 'en' || lang == 'En') {\n        var allAnswers = [\n            \"glad to see you.\",\n            \"hey jow\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n    } else if (lang == 'es' || lang == 'Es') {\n        var allAnswers = [\n            \"encantada de verte\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n    } else {\n        var allAnswers = [\n            \"estou feliz em te ver por aqui.\",\n            \"que bom te ver\"\n        ];\n        var vaAnswer = allAnswers[Math.floor(Math.random() * allAnswers.length)];\n\n    }\n\n    //Return message\n    if (vaInputs.user.first_name) {\n        return answer + ' ' + vaInputs.user.first_name + ' ' + vaAnswer;\n    } else {\n        return answer + ' ' + vaAnswer;\n    }\n})()\n",
+              "mode": "script"
+            }
+          ],
           "applicability": {
             "value": "",
             "mode": "query"
           }
-        },
-        "12dce789e39b4e8a9b8c641fd2a60566": {
-          "id": "12dce789e39b4e8a9b8c641fd2a60566",
-          "stepType": "ReusableTopic",
-          "name": "_connectorFlow",
-          "fields": [],
-          "applicability": {
-            "value": "",
-            "mode": "query"
-          },
-          "reusableTopicChoice": "_connectorFlow",
-          "reusableTopicId": "4f95979687260110b09f206f8bbb354d",
-          "inputs": {},
-          "variableIds": [],
-          "outputs": []
         }
       },
       "edges": [
+        {
+          "id": "2cbb857369f34e5ea623ca0744b13ab7",
+          "edgeType": "Edge",
+          "source": "c8211cb76a7d48439caa80bc367b7e17",
+          "target": "42f631e8783640bf9e799f92f45df251",
+          "sourcePort": "",
+          "targetPort": ""
+        },
         {
           "id": "6beb6340b558465ba2155cd4022516f2",
           "edgeType": "Edge",
           "source": "7d3088d0bf0e449b84bbb4c55bd4969a",
           "target": "c8211cb76a7d48439caa80bc367b7e17",
-          "sourcePort": "",
-          "targetPort": ""
-        },
-        {
-          "id": "2cbb857369f34e5ea623ca0744b13ab7",
-          "edgeType": "Edge",
-          "source": "c8211cb76a7d48439caa80bc367b7e17",
-          "target": "12dce789e39b4e8a9b8c641fd2a60566",
-          "sourcePort": "",
-          "targetPort": ""
-        },
-        {
-          "id": "a39dc7abf612474abc326f809ead61ff",
-          "edgeType": "Edge",
-          "source": "12dce789e39b4e8a9b8c641fd2a60566",
-          "target": "42f631e8783640bf9e799f92f45df251",
           "sourcePort": "",
           "targetPort": ""
         }
@@ -135,14 +114,11 @@
         <sys_created_on>2022-06-29 19:43:34</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_id>0e778607879c9110b09f206f8bbb35b1</sys_id>
-        <sys_mod_count>4</sys_mod_count>
         <sys_name>How can i help</sys_name>
         <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
         <sys_policy/>
         <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
         <sys_update_name>sys_cb_topic_0e778607879c9110b09f206f8bbb35b1</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-29 19:57:11</sys_updated_on>
         <triggerable_by_notification>false</triggerable_by_notification>
         <type>STANDARD</type>
         <variables/>
