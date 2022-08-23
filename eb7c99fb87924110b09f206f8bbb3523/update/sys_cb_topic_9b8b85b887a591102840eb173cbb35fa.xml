@@ -1,0 +1,1505 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic">
+    <sys_cb_topic action="INSERT_OR_UPDATE">
+        <applicability/>
+        <applicability_mode>query</applicability_mode>
+        <autopilot_topic>false</autopilot_topic>
+        <category/>
+        <channels/>
+        <connect_queue/>
+        <description>Enables users to provide feedback on their conversational experience, before the conversation ends.</description>
+        <expose_on_palette>false</expose_on_palette>
+        <flexible_conversation_switching>true</flexible_conversation_switching>
+        <graph>{
+  "graph_api_version": "1.0.39",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "950dcacbfc7d4324bb79ca53468f1162": {
+          "id": "950dcacbfc7d4324bb79ca53468f1162",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "value": "",
+            "mode": "simple"
+          },
+          "parameters": [
+            {
+              "name": "surveyId",
+              "value": "",
+              "id": "8cbaa293aa77475993c23001d26aa339",
+              "disabled": true,
+              "referenced": true,
+              "type": "String",
+              "hint": "",
+              "required": true
+            },
+            {
+              "name": "confirmationNeeded",
+              "value": "false",
+              "id": "6ba88e09886d4c6eae94fea77067db5e",
+              "referenced": false,
+              "disabled": true,
+              "type": "String",
+              "hint": "",
+              "required": true
+            },
+            {
+              "name": "saveQuestionsToContext",
+              "value": "false",
+              "id": "42894b70841b4879a54cdfba0fd4ab96",
+              "referenced": true,
+              "disabled": true,
+              "type": "String",
+              "hint": "",
+              "required": true
+            }
+          ],
+          "variableIds": [
+            "8cbaa293aa77475993c23001d26aa339",
+            "6ba88e09886d4c6eae94fea77067db5e",
+            "42894b70841b4879a54cdfba0fd4ab96"
+          ]
+        },
+        "ef9ce937b7b8414f94c69aa4d7332c0d": {
+          "id": "ef9ce937b7b8414f94c69aa4d7332c0d",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          },
+          "outputVariables": []
+        },
+        "6fc46a3c278b411b80ee85a4ceb31314": {
+          "id": "6fc46a3c278b411b80ee85a4ceb31314",
+          "name": "Load survey instance",
+          "script": "(function execute() {\n\tvar gr = new GlideRecord('asmt_metric_type');\n\tgr.get(vaInputs.surveyid);vaVars.endNote = vaSystem.getTranslation(gr, 'end_note', vaContext.getRequesterLang(), gr.end_note.getValue() || '');vaVars.introduction = vaSystem.getTranslation(gr, 'introduction', vaContext.getRequesterLang(), gr.introduction.getValue() || '');vaVars.surveyName = gr.name.toString();vaVars.surveyVerificationMsg = vaSystem.getSurveyVerificationMessage();\n})()",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "fb79c9a906f64cb98f3d7605abe0902c": {
+          "id": "fb79c9a906f64cb98f3d7605abe0902c",
+          "name": "Load questions",
+          "script": "(function execute() {\n    var gr = new GlideRecord('asmt_metric_category');\n    gr.addQuery('metric_type', vaInputs.surveyid);\n    gr.query();\n    gr.next();\n\n    var surveyCategory = gr.getUniqueValue();\n\n    var gr = new GlideRecord('asmt_metric')\n    gr.addQuery('category', surveyCategory);\n    gr.addQuery('active', true);\n    gr.orderBy('order');\n    gr.query();\n\n    var questions = [];\n    while (gr.next()) {\n        var question = {\n            sys_id: gr.getUniqueValue(),\n            scale: gr.scale + '',\n            metric: gr.sys_id + '',\n            type: gr.datatype + '',\n            display: vaSystem.getTranslation(gr, 'question', vaContext.getRequesterLang(), gr.question) + '',\n            dependsOn: gr.depends_on + '',\n            displayedWhen: gr.displayed_when + '',\n            name: gr.name + '',\n            max: gr.max + '',\n            min: gr.min + '',\n            mandatory: gr.mandatory + '',\n            field_validation: gr.field_validation + '',\n            reference_table: gr.reference_table + '',\n            condition: gr.condition + '',\n        };\n\n        // boolean and checkbox type questions use different displayed_when fields\n        var dependsOnType = gr.depends_on.datatype + '';\n        if (dependsOnType === 'boolean')\n            question['displayedWhen'] = gr.displayed_when_yesno + '';\n        else if (dependsOnType === 'checkbox')\n            question['displayedWhen'] = gr.displayed_when_checkbox + '';\n\n        questions.push(question);\n    }\n    vaVars.surveyQuestions = JSON.stringify(questions);\n    vaVars.questionCount = questions.length;\n})()",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "1dd720d7fda945c1bb7cd0b26f6b9c86": {
+          "id": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "name": "Set next question",
+          "script": "(function execute() {\n    vaVars.questionIndex++;\n    if (!(vaVars.questionCount &amp;&amp; vaVars.questionIndex &lt; vaVars.questionCount))\n        return;\n\n    var i = vaVars.questionIndex;\n    var questions = JSON.parse(vaVars.surveyQuestions);\n\n    // Set question type &amp; display value\n    vaVars.currentQuestionId = questions[i].sys_id;\n    vaVars.currentQuestionType = questions[i].type;\n    vaVars.currentQuestionMetric = questions[i].metric;\n    vaVars.currentQuestionDisplay = questions[i].display;\n    vaVars.currentQuestionMax = questions[i].max;\n    vaVars.currentQuestionMin = questions[i].min;\n    vaVars.currentQuestionMandatory = questions[i].mandatory;\n    vaVars.currentQuestionFieldValidator = questions[i].field_validation;\n    vaVars.currentQuestionReferenceTable = questions[i].reference_table;\n    vaVars.currentQuestionReferenceCondition = questions[i].condition;\n\n    // Load choices if relevant\n    if (questions[i].type === 'imagescale' || vaVars.choiceTypes.split(',').indexOf(questions[i].type) &gt; -1) {\n        questions[i].choices = getChoices(questions[i]);\n        vaVars.surveyQuestions = JSON.stringify(questions);\n    }\n})();\n\nfunction getChoices(q) {\n    var gr = new GlideRecord('asmt_metric_definition');\n    gr.addQuery('metric', q.metric);\n    gr.orderBy('order');\n    gr.query();\n\n    var choices = [];\n    while (gr.next()) {\n        choices.push({\n            sys_id: gr.getUniqueValue(),\n            display: vaSystem.getTranslation(gr, 'display', vaContext.getRequesterLang(),gr.display),\n            value: gr.getValue('value'),\n            selected: gr.getDisplayValue('selected_image'),\n            unselected: gr.getDisplayValue('unselected_image')\n        });\n    }\n    return choices;\n}",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "7ea23b4b7ed64e938ade9211dc995758": {
+          "id": "7ea23b4b7ed64e938ade9211dc995758",
+          "stepType": "Decision",
+          "name": "Out of questions?"
+        },
+        "a8d89721cb3e4a4db791922ecc6162a5": {
+          "id": "a8d89721cb3e4a4db791922ecc6162a5",
+          "name": "Set answers",
+          "script": "(function execute() {\n    var answers = JSON.parse(vaVars.surveyAnswers);\n    answers[vaVars.currentQuestionId] = getInput();\n    vaVars.surveyAnswers = JSON.stringify(answers);\n})();\n\nfunction getInput() {\n    var values = {'value': null, 'Qtype': vaVars.currentQuestionType, 'displayValue':null};\n    if (vaVars.choiceTypes.split(',').indexOf(vaVars.currentQuestionType) &gt; -1) {\n        values.value = getValueIfSet(vaInputs.show_choice_question);\n        values.displayValue = getDisplayValueIfSet(vaInputs.show_choice_question,values.value);\n    }\n\n    if (vaVars.textTypes.split(',').indexOf(vaVars.currentQuestionType) &gt; -1) {\n        values.value = getValueIfSet(vaInputs.show_text_input_question);\n        values.displayValue = getDisplayValueIfSet(vaInputs.show_text_input_question,values.value);\n    }\n\n    switch (vaVars.currentQuestionType) {\n        case 'imagescale':\n            values.value = getValueIfSet(vaInputs.show_image_scale_question);\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_image_scale_question,values.value);\n            var questions = JSON.parse(vaVars.surveyQuestions);\n            //stores correct displayValue, vaInputs returns display+value\n            if(vaInputs.show_image_scale_question &amp;&amp; vaInputs.show_image_scale_question != null){\n                questions[vaVars.questionIndex].choices.forEach(function(c){\n                    if(c.value === values.value)\n                        values.displayValue = c.display;\n                });\n            }\n            break;\n        case 'boolean':\n            values.value = getValueIfSet(vaInputs.show_boolean_question);\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_boolean_question,values.value);\n            break;\n        case 'checkbox':\n            values.value= getValueIfSet(vaInputs.show_boolean_question);\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_boolean_question,values.value);\n            break;\n        case 'attachment':\n            values.value = getValueIfSet(vaInputs.show_attachment_question);\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_attachment_question,values.value);\n            break;\n        case 'date':\n            const date = getValueIfSet(vaInputs.show_date_question);\n            values.value = (date != null) ? date.toString() : null;\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_date_question,values.value);\n            break;\n        case 'datetime':\n            const dateTime = getValueIfSet(vaInputs.show_datetime_question);\n            values.value = (dateTime != null) ? dateTime.toString() : null;\n            vaInputs.show_datetime_question.setTimeZone(vaContext.getDeviceTimeZone());\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_datetime_question,values.value);\n            break;\n        case 'reference':\n            values.value = getValueIfSet(vaInputs.show_reference_question);\n            values.displayValue = getDisplayValueIfSet(vaInputs.show_reference_question,values.value);\n    }\n    return values;\n}\n\nfunction getValueIfSet(field){\n    return field &amp;&amp; field.isValueSet() ? field.getValue() : null;\n}\n\nfunction getDisplayValueIfSet(field, val){\n    if (!field || field == null)\n       return val;\n    var dv = field.getDisplayValue();\n     return dv &amp;&amp; dv.length &gt; 0  ? dv : val;\n}",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "6011a8913f454c5f8f2eaaa131969d9f": {
+          "id": "6011a8913f454c5f8f2eaaa131969d9f",
+          "stepType": "Decision",
+          "name": "Does question satisfy dependency?"
+        },
+        "b4a433df355d486696c9afc48ef463f3": {
+          "id": "b4a433df355d486696c9afc48ef463f3",
+          "name": "Check question dependency",
+          "script": "(function execute() {\n    var i = vaVars.questionIndex;\n    var questions = JSON.parse(vaVars.surveyQuestions);\n    var q = questions[i];\n\n    var satisfied = true;\n    var hasDependency = !(!q.dependsOn);\n    vaVars.currentIsDependencySatisfied = !hasDependency || isSat(q);\n})();\n\nfunction isSat(q) {\n    var questions = JSON.parse(vaVars.surveyQuestions);\n    var answers = JSON.parse(vaVars.surveyAnswers);\n\n    var answerValid = false;\n    questions.forEach(function(question) {\n        if (question.metric !== q.dependsOn)\n            return;\n\n        var answerExists = question.sys_id in answers;\n        if (!answerExists)\n            return;\n\n        var selectedChoice = answers[question.sys_id]['value'];\n\n        if (question.type === 'boolean' || question.type === 'checkbox') {\n            if ((selectedChoice === true &amp;&amp; q.displayedWhen === '1') || (selectedChoice === false &amp;&amp; q.displayedWhen === '0'))\n                answerValid = true;\n        } else {\n            var choices = question.choices.filter(function(c) {\n                return c.value === selectedChoice;\n            });\n\n            if (choices.length &amp;&amp; choices[0].sys_id)\n                answerValid = q.displayedWhen.indexOf(choices[0].sys_id) !== -1;\n        }\n    });\n\n    return answerValid;\n}",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "7b1bdf3ceffe4c7db3891ddc58023bb4": {
+          "id": "7b1bdf3ceffe4c7db3891ddc58023bb4",
+          "stepType": "Prompt",
+          "name": "Show boolean question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()\n",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if ((vaVars.currentQuestionType === 'boolean') || (vaVars.currentQuestionType === 'checkbox')) {\n        vaInputs.show_boolean_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    }\n        return false;\n})()"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "db2c51b5a0504c7ea50bedd00e0290b5",
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Text",
+            "script": ""
+          }
+        },
+        "a0c96f7fc6b04b77bef514dcbee7a8db": {
+          "id": "a0c96f7fc6b04b77bef514dcbee7a8db",
+          "name": "Submit survey answers",
+          "script": "(function execute() {\n    if(vaInputs.savequestionstocontext == 'true'){ \n        vaVars.surveyInstanceId = new sn_assessment_core.AssessmentCreation().createAssessments(vaInputs.surveyid, '', gs.getUserID(), false, '', false, '', vaVars._interaction_record_sysid, false, 'interaction');\n        vaVars.surveyInstanceId = vaVars.surveyInstanceId.substring(0, 32);\n        vaVars.LiveAgent_pre_assessment_instance = vaVars.surveyInstanceId;\n        vaVars.LiveAgent_pre_chat_survey_name = vaVars.surveyName;\n    } else{ \n        vaVars.surveyInstanceId = new sn_assessment_core.AssessmentCreation().createAssessments(vaInputs.surveyid, '', vaVars._topic_postchat_user_id, false, '', false, '', vaVars._interaction_record_sysid, false, 'interaction');\n        vaVars.surveyInstanceId = vaVars.surveyInstanceId.substring(0, 32);\n        vaVars.LiveAgent_post_assessment_instance = vaVars.surveyInstanceId;\n        vaVars.LiveAgent_post_chat_survey_name = vaVars.surveyName;    \n    }\n\n    var answers = JSON.parse(vaVars.surveyAnswers);\n    var data = {\n        sysparm_instance_id: vaVars.surveyInstanceId,\n        sysparm_action: 'submit'\n    };\n\n    var questionData = new global.TopicPreChatUtil().getQuestionData(vaVars.surveyInstanceId);\n\n    Object.keys(answers).forEach(function(q) {\n        if (answers[q] &amp;&amp; answers[q] &amp;&amp; answers[q].value != null){ \n            if (answers[q]['Qtype'] === 'boolean') {\n                data['ASMTQUESTION:' + questionData[q].instanceID] = (answers[q]['value'] === true) ? '1' : '0';\n            } else if (answers[q]['Qtype'] === 'checkbox') {\n                data['ASMTQUESTION:' + questionData[q].instanceID] = (answers[q]['value'] === true) ? 'true' : '';\n            } else\n                data['ASMTQUESTION:' + questionData[q].instanceID] = answers[q]['value'];\n            if (vaInputs.savequestionstocontext == 'true')\n                saveToContext(questionData[q].name, answers[q], questionData[q].contextVar, questionData[q].type);\n        }\n        \n    });\n    var response = new global.AssessmentSubmitProcessor().processRequest(data);\n})()\n\nfunction saveToContext(name, a, contextVar, type){\n        if(contextVar != \"\") {\n            var contextVarName = contextVar;\n        } else {\n            //remove all special characters and replace spaces with _\n            var questionName = name.toString().replace(/[^a-zA-Z0-9]/g, '_').replace(/_$/,'');     \n            //append survey name to question name\n            var contextVarName = \"liveagent_\" +vaVars.surveyName +\".\"+ questionName;\n        }\n        vaVars[contextVarName] = a.value.toString();\n        //for choice questions, store response and not response index as context var\n        if (type === 'imagescale' || vaVars.choiceTypes.split(',').indexOf(type) &gt; -1) { \n             vaVars[contextVarName] = a.displayValue.toString();    \n        }\n}",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "b8ab4786574d415fa82e8f192b1ef80c": {
+          "id": "b8ab4786574d415fa82e8f192b1ef80c",
+          "stepType": "Prompt",
+          "name": "Show text input question",
+          "prompt": {
+            "value": "(function execute() {\n    if (vaVars.currentQuestionType === 'long')\n        return gs.getMessageLang('{0} (Range: {1} - {2})', vaContext.getRequesterLang(), [vaVars.currentQuestionDisplay, vaVars.currentQuestionMin, vaVars.currentQuestionMax]);\n    else if (vaVars.currentQuestionType === 'percentage')\n        return gs.getMessageLang('{0} (Range: {1} - {2} %)', vaContext.getRequesterLang(), [vaVars.currentQuestionDisplay,vaVars.currentQuestionMin, vaVars.currentQuestionMax]);\n    else\n        return vaVars.currentQuestionDisplay;\n})()",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.textTypes.split(',').indexOf(vaVars.currentQuestionType) &gt; -1) {\n        vaInputs.show_text_input_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    } else \n        return false;\n})()"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "86b8c8db250547058c9af4207d64935b",
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Custom",
+            "script": "function validate(value) {\n    // for \"skip\" which has input value as empty, long or percentage type, general string type with no validator defined\n    if ((gs.nil(value) &amp;&amp; vaVars.currentQuestionMandatory === 'false') || vaVars.currentQuestionType === 'long' || vaVars.currentQuestionType === 'percentage' || gs.nil(vaVars.currentQuestionFieldValidator))\n        return {\n            valid: true,\n        }; \n\n    // for string type with validator defined, and question is not skipped\n    var validatorGr = new GlideRecord(\"sys_cs_field_script_validator\");\n    if (!validatorGr.isValid())\n\t    return {\n           valid: false,\n           error: gs.getMessageLang(\"validator table does not exist\", vaContext.getRequesterLang())\n        };\n\n    if (validatorGr.get(vaVars.currentQuestionFieldValidator)) {\n        var scriptBuild = \"(\" + validatorGr.validator + \")('\"+ value + \"');\";\n        var isValidAnswer = eval(scriptBuild);\n        return {\n            valid: isValidAnswer,\n            error: isValidAnswer ? undefined : validatorGr.error_message + ''\n        };\n    } else {\n        return {\n            valid: false,\n            error: gs.getMessageLang(\"validator record does not exist\", vaContext.getRequesterLang())\n        };\n    }\n}"
+          }
+        },
+        "83e6c0162f974497bf0c38ba331ca93c": {
+          "id": "83e6c0162f974497bf0c38ba331ca93c",
+          "stepType": "TextOutput",
+          "name": "End note",
+          "value": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.endNote}}",
+                      "displayValue": "vaVars➛endNote"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "secure": false
+        },
+        "f6f516977b564f16b892a5fc51a780aa": {
+          "id": "f6f516977b564f16b892a5fc51a780aa",
+          "stepType": "TextOutput",
+          "name": "Introduction",
+          "value": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.introduction}}",
+                      "displayValue": "vaVars➛introduction"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "secure": false
+        },
+        "e3e9cf36ad4443d494e45fc99d2a318d": {
+          "stepType": "ReferenceChoicePrompt",
+          "name": "Show choice question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()\n",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.choiceTypes.split(',').indexOf(vaVars.currentQuestionType) &gt; -1) {\n        vaInputs.show_choice_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    }\n        return false;\n})()\n"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "87bfa0c129514fef88d414679852002f",
+          "id": "e3e9cf36ad4443d494e45fc99d2a318d",
+          "mode": "external",
+          "script": "(function execute() {\n    var i = vaVars.questionIndex;\n    var questions = JSON.parse(vaVars.surveyQuestions);\n    var choices = questions[i].choices;\n    var options = [];\n    for (var j = 0; j &lt; choices.length; j++) {\n        var c = choices[j];\n        options.push({\n            'render_style':'bubble',\n            'label': c.display,\n            'value': c.value\n        });\n    }\n\n    return options;\n})()",
+          "noRecordsResponseMsg": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "text": "No data found"
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "condition": {
+            "value": "(function execute() {\n    var i = vaVars.questionIndex;\n    var questions = JSON.parse(vaVars.surveyQuestions);\n    var choices = questions[i].choices;\n    var options = [];\n    for (var j = 0; j &lt; choices.length; j++) {\n        var c = choices[j];\n        options.push({\n            'render_style':'bubble',\n            'label': c.display,\n            'value': c.value\n        });\n    }\n\n    return options;\n})()",
+            "mode": "external_script"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "cardMetadata": {
+            "mode": "card",
+            "metadataScript": "",
+            "cardTemplate": "",
+            "cardFields": {},
+            "cardDefinition": {}
+          },
+          "hasCardHeader": false
+        },
+        "f15a83f70fef43fbbe4ceb4431ab8f80": {
+          "id": "f15a83f70fef43fbbe4ceb4431ab8f80",
+          "stepType": "Prompt",
+          "name": "Show attachment question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()\n",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.currentQuestionType === 'attachment') {\n        vaInputs.show_attachment_question.setRequired (vaVars.currentQuestionMandatory);\n        return true;\n    } else \n        return false;\n})()"
+          },
+          "optional": false,
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": {
+            "id": ""
+          },
+          "variableId": "2d50a9cca82147d1899b4536771528c3",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Text",
+            "script": ""
+          }
+        },
+        "ec913ccf75994dedb7757214dcdf5238": {
+          "id": "ec913ccf75994dedb7757214dcdf5238",
+          "stepType": "Prompt",
+          "name": "Show date question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.currentQuestionType === 'date') {\n        vaInputs.show_date_question.setRequired (vaVars.currentQuestionMandatory);\n        return true;\n    } else \n        return false;\n})()"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "variableId": "554be0e6b43c4101be1b2cab7562341e",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Text",
+            "script": ""
+          }
+        },
+        "721d38e4dd0b49388739184ee551500d": {
+          "id": "721d38e4dd0b49388739184ee551500d",
+          "stepType": "Prompt",
+          "name": "Show datetime question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.currentQuestionType === 'datetime') {\n        vaInputs.show_datetime_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    } else\n        return false;\n})()"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "variableId": "f4315814b4c54caebbc961d35d174728",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Text",
+            "script": ""
+          }
+        },
+        "a4c7e98fe1694f83bb2b07ec57141ea4": {
+          "id": "a4c7e98fe1694f83bb2b07ec57141ea4",
+          "name": "Answer validation",
+          "script": "(function execute() {\n    vaVars.currentAnswerValidation = true;\n    vaVars.currentAnswerErrorMsg = '';\n\n    if (vaVars.currentQuestionType === 'long' || vaVars.currentQuestionType === 'percentage')\n        validateFieldLimits();\n})();\n\nfunction validateFieldLimits() {\n\tif ((!vaInputs.show_text_input_question.isValueSet() || vaInputs.show_text_input_question.getValue().length == 0)\n\t    &amp;&amp; !vaInputs.show_text_input_question.isRequired())\n\t\treturn;\n\tvar max = vaVars.currentQuestionMax;\n\tvar min = vaVars.currentQuestionMin;\n\t\t\n\tvar value = vaInputs.show_text_input_question.getValue();\n\tvar newvalue = Number(value);\n\tif (isNaN(newvalue)) {vaVars.currentAnswerValidation = false;vaVars.currentAnswerErrorMsg = gs.getMessageLang('The input value is not a valid number. Please try again', vaContext.getRequesterLang());\n\t} else if (newvalue &gt; max || newvalue &lt; min) {vaVars.currentAnswerValidation = false;vaVars.currentAnswerErrorMsg = gs.getMessageLang('The input value is outside the valid range. Please try again', vaContext.getRequesterLang());\n\t}\n}",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "e5ad34e6099945d7849c834eef1bd479": {
+          "id": "e5ad34e6099945d7849c834eef1bd479",
+          "stepType": "Decision",
+          "name": "Check range"
+        },
+        "2caec646461549eb9f074d49dd8da84a": {
+          "id": "2caec646461549eb9f074d49dd8da84a",
+          "stepType": "TextOutput",
+          "name": "Validation failed",
+          "value": {
+            "value": "(function execute() {\n    return vaVars.currentAnswerErrorMsg;\n})()",
+            "mode": "script"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "secure": false
+        },
+        "46cc86904c21428ebb8d811a82f28566": {
+          "stepType": "CarouselPrompt",
+          "name": "Show image scale question",
+          "prompt": {
+            "value": "",
+            "mode": "simple"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if (vaVars.currentQuestionType === 'imagescale') {\n        vaInputs.show_image_scale_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    } else\n        return false;\n})()\n"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "16fb1f224b724fb996c94eefab3d9c06",
+          "id": "46cc86904c21428ebb8d811a82f28566",
+          "carouselLabel": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()\n",
+            "mode": "script"
+          },
+          "carouselItemExpression": "(function execute() {\n    var i = vaVars.questionIndex;\n    var questions = JSON.parse(vaVars.surveyQuestions);\n    var choices = questions[i].choices;\n    var options = [];\n    for (var j = 0; j &lt; choices.length; j++) {\n        var c = choices[j];\n        options.push({\n            'Name': c.display,\n            'Value': c.value,\n            'Body': c.unselected\n        });\n    }\n\n    return options;\n})()",
+          "noRecordsResponseMsg": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "text": "No data found"
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "3d281abf4c1445e88f6c4e9f4355b5aa": {
+          "id": "3d281abf4c1445e88f6c4e9f4355b5aa",
+          "stepType": "ScriptOutput",
+          "name": "Summary",
+          "output_type": "single_part",
+          "script": "(function execute() {\n      var questions = JSON.parse(vaVars.surveyQuestions);\n      var answers = JSON.parse(vaVars.surveyAnswers);\n      var questionAnswerPairs = [];\n\n      questions.forEach(function(q) {\n            var question = q.display.toString();\n            var answer = answers[q.metric];\n            var questionAnswer = answer.displayValue != null ? answer.displayValue :\n            answer.value != null ? answer.value : '';\n            var questionType = q.type + '';\n            \n            if(questionType == 'checkbox' || questionType == 'boolean'){\n                  if (questionAnswer == \"1\") {\n                        questionAnswer = \"Yes\";\n                  } else if (questionAnswer == \"0\") {\n                        questionAnswer = \"No\"\n                  }\n            }\n            if(answer){questionAnswerPairs.push({\"fieldLabel\": question, \"fieldValue\": questionAnswer});}         \n      });\n      \n      var card_data = JSON.stringify({\n            \"title\":gs.getMessageLang(\"Response Summary\", vaContext.getRequesterLang()),\n            \"fields\":questionAnswerPairs,\n      });\n\n      return vaSystem.renderCard(\"PreChat\", card_data);\n})()\n",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "333777c7c58b491ebb10a9a22cc88b67": {
+          "id": "333777c7c58b491ebb10a9a22cc88b67",
+          "stepType": "Prompt",
+          "name": "Verify Response",
+          "prompt": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.surveyVerificationMsg}}",
+                      "displayValue": "vaVars➛surveyVerificationMsg"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "optional": false,
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "variableId": "bc4f12c42847485abbf3909157e78b1a",
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "inputType": {
+            "format": "Text",
+            "script": ""
+          }
+        },
+        "67f6b5c25c0349fca01f762818747a3f": {
+          "id": "67f6b5c25c0349fca01f762818747a3f",
+          "stepType": "Decision",
+          "name": "Summary Correct?"
+        },
+        "43028a8d0b22477a86cbf77f88f1b527": {
+          "id": "43028a8d0b22477a86cbf77f88f1b527",
+          "name": "Reset Question Index",
+          "script": "(function execute() {\n    vaVars.questionIndex = -1;\n})()",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "mode": "query",
+            "value": ""
+          }
+        },
+        "d850c0da237c4cb1804f5255dda155de": {
+          "id": "d850c0da237c4cb1804f5255dda155de",
+          "stepType": "Decision",
+          "name": "Confirmation"
+        },
+        "3cd6d46bf350443c99ec0cf199c44b21": {
+          "stepType": "ReferenceChoicePrompt",
+          "name": "Show reference question",
+          "prompt": {
+            "value": "(function execute() {\n    return vaVars.currentQuestionDisplay;\n})()\n",
+            "mode": "script"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "script",
+            "value": "(function execute() {\n    if ((vaVars.currentQuestionType === 'reference')) {\n        vaInputs.show_reference_question.setRequired(vaVars.currentQuestionMandatory);\n        return true;\n    } else\n        return false;\n})()\n"
+          },
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "85acd4f511814be192263f3144b2fa72",
+          "id": "3cd6d46bf350443c99ec0cf199c44b21",
+          "mode": "external",
+          "script": "(function execute() {\n    var options = [];\n    var table = vaVars.currentQuestionReferenceTable;\n    var condition = vaVars.currentQuestionReferenceCondition;\n    if (!table)\n        return options;\n \n    var taskExtensions = new TableUtils(\"task\").getTableExtensions();\n    var isTask = (taskExtensions.indexOf(table) &gt; -1) ? true : false;\n\n    var gr = new GlideRecord(table);\n    if (condition)\n        gr.addEncodedQuery(condition);\n    gr.query();\n    while (gr.next()) {\n        options.push({\n            'render_style':'bubble',\n            'value': gr.sys_id + '',\n            'label': (isTask)? gr.number + ': ' + gr.short_description : gr.getDisplayValue()\n        });\n    }\n    return options;\n})()",
+          "noRecordsResponseMsg": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "text": "No reference found"
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "condition": {
+            "value": "(function execute() {\n    var options = [];\n    var table = vaVars.currentQuestionReferenceTable;\n    var condition = vaVars.currentQuestionReferenceCondition;\n    if (!table)\n        return options;\n \n    var taskExtensions = new TableUtils(\"task\").getTableExtensions();\n    var isTask = (taskExtensions.indexOf(table) &gt; -1) ? true : false;\n\n    var gr = new GlideRecord(table);\n    if (condition)\n        gr.addEncodedQuery(condition);\n    gr.query();\n    while (gr.next()) {\n        options.push({\n            'render_style':'bubble',\n            'value': gr.sys_id + '',\n            'label': (isTask)? gr.number + ': ' + gr.short_description : gr.getDisplayValue()\n        });\n    }\n    return options;\n})()",
+            "mode": "external_script"
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false,
+          "entity": "",
+          "cardMetadata": {
+            "mode": "card",
+            "metadataScript": "",
+            "cardTemplate": "",
+            "cardFields": {},
+            "cardDefinition": {}
+          },
+          "hasCardHeader": false
+        }
+      },
+      "edges": [
+        {
+          "id": "cb1b62a3c21848a293a99153272bec2c",
+          "edgeType": "Edge",
+          "source": "950dcacbfc7d4324bb79ca53468f1162",
+          "target": "6fc46a3c278b411b80ee85a4ceb31314",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "510720246c9d49b783802935a5b86a01",
+          "edgeType": "Edge",
+          "source": "e3e9cf36ad4443d494e45fc99d2a318d",
+          "target": "7b1bdf3ceffe4c7db3891ddc58023bb4",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "d283e8fa295a4853b0da64111ca5599a",
+          "edgeType": "Branch",
+          "source": "6011a8913f454c5f8f2eaaa131969d9f",
+          "target": "b8ab4786574d415fa82e8f192b1ef80c",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return vaVars.currentIsDependencySatisfied;\n})()\n"
+          },
+          "label": "Yes"
+        },
+        {
+          "id": "24baa1c231da4786bffec1ba6bf95dd4",
+          "edgeType": "Edge",
+          "source": "b4a433df355d486696c9afc48ef463f3",
+          "target": "6011a8913f454c5f8f2eaaa131969d9f",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "0ed3dbaa75d747d5a6b01e8f70783293",
+          "edgeType": "Edge",
+          "source": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "target": "7ea23b4b7ed64e938ade9211dc995758",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "59bcd05c266c40ab930984ff52425987",
+          "edgeType": "Edge",
+          "source": "6fc46a3c278b411b80ee85a4ceb31314",
+          "target": "fb79c9a906f64cb98f3d7605abe0902c",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "853efc6ccb7b483bbfced9aa9d519784",
+          "edgeType": "Edge",
+          "source": "a8d89721cb3e4a4db791922ecc6162a5",
+          "target": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "1461e4fefc744452916df86bc8f89291",
+          "edgeType": "Branch",
+          "source": "6011a8913f454c5f8f2eaaa131969d9f",
+          "target": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return !vaVars.currentIsDependencySatisfied;\n})()\n"
+          },
+          "label": "No"
+        },
+        {
+          "id": "8af53ef8d17c4d24b8782aad194c04ab",
+          "edgeType": "Branch",
+          "source": "7ea23b4b7ed64e938ade9211dc995758",
+          "target": "b4a433df355d486696c9afc48ef463f3",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return vaVars.questionIndex &lt; vaVars.questionCount;\n})()\n"
+          },
+          "label": "No"
+        },
+        {
+          "id": "f1cdc344bc4e42ad8f78c2bc6c6c1bd3",
+          "edgeType": "Edge",
+          "source": "a0c96f7fc6b04b77bef514dcbee7a8db",
+          "target": "83e6c0162f974497bf0c38ba331ca93c",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "b2f827dcb22f4687adfdc79cf5148b05",
+          "edgeType": "Edge",
+          "source": "83e6c0162f974497bf0c38ba331ca93c",
+          "target": "ef9ce937b7b8414f94c69aa4d7332c0d",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "6bc578dec6f545d183fd543a4e683135",
+          "edgeType": "Edge",
+          "source": "fb79c9a906f64cb98f3d7605abe0902c",
+          "target": "f6f516977b564f16b892a5fc51a780aa",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "5fae59890dec46e6870d6a51d95fd60b",
+          "edgeType": "Edge",
+          "source": "f6f516977b564f16b892a5fc51a780aa",
+          "target": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "c77aefc74c26421e8d3265eabf564674",
+          "edgeType": "Edge",
+          "source": "7b1bdf3ceffe4c7db3891ddc58023bb4",
+          "target": "f15a83f70fef43fbbe4ceb4431ab8f80",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "0a4db8d8ec85430883a10149e114f7dd",
+          "edgeType": "Edge",
+          "source": "f15a83f70fef43fbbe4ceb4431ab8f80",
+          "target": "ec913ccf75994dedb7757214dcdf5238",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "5650f0ee519c43a898980adfabd0b3fb",
+          "edgeType": "Edge",
+          "source": "ec913ccf75994dedb7757214dcdf5238",
+          "target": "721d38e4dd0b49388739184ee551500d",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "75b2ce39ad3c4f999ac7ec6f28c33898",
+          "edgeType": "Edge",
+          "source": "a4c7e98fe1694f83bb2b07ec57141ea4",
+          "target": "e5ad34e6099945d7849c834eef1bd479",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "7f024bd9552e43b3af39dd4c3e68c03f",
+          "edgeType": "Branch",
+          "source": "e5ad34e6099945d7849c834eef1bd479",
+          "target": "a8d89721cb3e4a4db791922ecc6162a5",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return vaVars.currentAnswerValidation;\n})()"
+          },
+          "label": "In range"
+        },
+        {
+          "id": "c1b89e1124d6484db77da1d845af07a7",
+          "edgeType": "Branch",
+          "source": "e5ad34e6099945d7849c834eef1bd479",
+          "target": "2caec646461549eb9f074d49dd8da84a",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return !vaVars.currentAnswerValidation;\n})()"
+          },
+          "label": "Out of range"
+        },
+        {
+          "id": "54eb39726e044d19b4e215676713e34f",
+          "edgeType": "Edge",
+          "source": "2caec646461549eb9f074d49dd8da84a",
+          "target": "b8ab4786574d415fa82e8f192b1ef80c",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "8f2c3c5a74624ae7a8f96a25c07c1486",
+          "edgeType": "Edge",
+          "source": "b8ab4786574d415fa82e8f192b1ef80c",
+          "target": "46cc86904c21428ebb8d811a82f28566",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "7dd70dce55374e6c864df8c6bfc26580",
+          "edgeType": "Edge",
+          "source": "46cc86904c21428ebb8d811a82f28566",
+          "target": "e3e9cf36ad4443d494e45fc99d2a318d",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "e93146edd5f44e1a91029e973ebebcaf",
+          "edgeType": "Edge",
+          "source": "3d281abf4c1445e88f6c4e9f4355b5aa",
+          "target": "333777c7c58b491ebb10a9a22cc88b67",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "cf182a2c73ca41beb7a7e7ac35e3cd09",
+          "edgeType": "Edge",
+          "source": "333777c7c58b491ebb10a9a22cc88b67",
+          "target": "67f6b5c25c0349fca01f762818747a3f",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "da8b6d2d198e47e192fa57a05822432a",
+          "edgeType": "Branch",
+          "source": "67f6b5c25c0349fca01f762818747a3f",
+          "target": "a0c96f7fc6b04b77bef514dcbee7a8db",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "value": "verify_response=true",
+            "mode": "query"
+          },
+          "label": "Yes"
+        },
+        {
+          "id": "fdae5ce021c74920848308da3588102b",
+          "edgeType": "Branch",
+          "source": "67f6b5c25c0349fca01f762818747a3f",
+          "target": "43028a8d0b22477a86cbf77f88f1b527",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "value": "verify_response=",
+            "mode": "query"
+          },
+          "label": "No"
+        },
+        {
+          "id": "13461dc9451848668fef9ab5e5cbd197",
+          "edgeType": "Edge",
+          "source": "43028a8d0b22477a86cbf77f88f1b527",
+          "target": "1dd720d7fda945c1bb7cd0b26f6b9c86",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "be304afaaf3f4901a07e2749fc0db570",
+          "edgeType": "Branch",
+          "source": "7ea23b4b7ed64e938ade9211dc995758",
+          "target": "d850c0da237c4cb1804f5255dda155de",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    return vaVars.questionIndex &gt;= vaVars.questionCount;\n})()\n"
+          },
+          "label": "Yes"
+        },
+        {
+          "id": "d01b744baf274d81968a52b684e955c8",
+          "edgeType": "Branch",
+          "source": "d850c0da237c4cb1804f5255dda155de",
+          "target": "3d281abf4c1445e88f6c4e9f4355b5aa",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "value": "confirmationneeded=true",
+            "mode": "query"
+          },
+          "label": "Confirmation?"
+        },
+        {
+          "id": "6888f7f192e345f58e9f0f4dc100fd30",
+          "edgeType": "Branch",
+          "source": "d850c0da237c4cb1804f5255dda155de",
+          "target": "a0c96f7fc6b04b77bef514dcbee7a8db",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "value": "confirmationneeded!=true",
+            "mode": "query"
+          },
+          "label": "No"
+        },
+        {
+          "id": "7663f26912d84462aa1f49e9804c9d77",
+          "edgeType": "Edge",
+          "source": "721d38e4dd0b49388739184ee551500d",
+          "target": "3cd6d46bf350443c99ec0cf199c44b21",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "be1eecd88cbc4efaaf6ba0889a8d399c",
+          "edgeType": "Edge",
+          "source": "3cd6d46bf350443c99ec0cf199c44b21",
+          "target": "a4c7e98fe1694f83bb2b07ec57141ea4",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "155c08830b81485da41d873af71ef979": {
+      "id": "155c08830b81485da41d873af71ef979",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "surveyInstanceId",
+      "label": "surveyInstanceId",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "c5f812a6317e45cda7ee905bb8059c91": {
+      "id": "c5f812a6317e45cda7ee905bb8059c91",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "surveyQuestions",
+      "label": "surveyQuestions",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "9cece181a15e464d86b17f32981ba40f": {
+      "id": "9cece181a15e464d86b17f32981ba40f",
+      "value": {
+        "mode": "simple",
+        "value": "-1"
+      },
+      "name": "questionIndex",
+      "label": "questionIndex",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "16fb1f224b724fb996c94eefab3d9c06": {
+      "id": "16fb1f224b724fb996c94eefab3d9c06",
+      "name": "show_image_scale_question",
+      "label": "Show Image Scale Question",
+      "varType": "carousel-image",
+      "category": "vaInputs"
+    },
+    "4f3eb3ef1ff74fb199293f02a4bc6386": {
+      "id": "4f3eb3ef1ff74fb199293f02a4bc6386",
+      "value": {
+        "mode": "simple",
+        "value": "0"
+      },
+      "name": "questionCount",
+      "label": "questionCount",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "86b8c8db250547058c9af4207d64935b": {
+      "id": "86b8c8db250547058c9af4207d64935b",
+      "name": "show_text_input_question",
+      "label": "Show Text Input Question",
+      "varType": "string",
+      "category": "vaInputs",
+      "secure": false,
+      "encryptionSalt": {
+        "value": "MTYxNDA5ODY2MTE1NSBWQSBEZXNpZ25lciBpcyBhd2Vzb21l",
+        "mode": "simple"
+      },
+      "encryptionHashFunction": "SHA-256"
+    },
+    "a03ddf40c3c2417fb239b11e2dcc2bb4": {
+      "id": "a03ddf40c3c2417fb239b11e2dcc2bb4",
+      "value": {
+        "mode": "simple",
+        "value": "{}"
+      },
+      "name": "surveyAnswers",
+      "label": "surveyAnswers",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "db2c51b5a0504c7ea50bedd00e0290b5": {
+      "id": "db2c51b5a0504c7ea50bedd00e0290b5",
+      "name": "show_boolean_question",
+      "label": "Show Boolean Question",
+      "varType": "boolean",
+      "category": "vaInputs"
+    },
+    "cbbac1fd951845f9aaffbad709d2a5e9": {
+      "id": "cbbac1fd951845f9aaffbad709d2a5e9",
+      "value": {
+        "mode": "simple",
+        "value": "choice,scale,numericscale"
+      },
+      "name": "choiceTypes",
+      "label": "choiceTypes",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "87bfa0c129514fef88d414679852002f": {
+      "id": "87bfa0c129514fef88d414679852002f",
+      "name": "show_choice_question",
+      "label": "Show Choice Question",
+      "varType": "reference",
+      "table": "",
+      "category": "vaInputs"
+    },
+    "4b061f2ccf4c4d4bbb6590285b7851aa": {
+      "id": "4b061f2ccf4c4d4bbb6590285b7851aa",
+      "value": {
+        "mode": "simple",
+        "value": ""
+      },
+      "name": "currentQuestionId",
+      "label": "currentQuestionId",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "5b4ab448d321428eac5ca57ec95604de": {
+      "id": "5b4ab448d321428eac5ca57ec95604de",
+      "value": {
+        "mode": "simple",
+        "value": ""
+      },
+      "name": "currentQuestionType",
+      "label": "currentQuestionType",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "0e0c035c26ff49cf9f0c244d2e3cef2c": {
+      "id": "0e0c035c26ff49cf9f0c244d2e3cef2c",
+      "value": {
+        "mode": "simple",
+        "value": ""
+      },
+      "name": "currentQuestionMetric",
+      "label": "currentQuestionMetric",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "dfb81a715a624e52b395f0e03704877b": {
+      "id": "dfb81a715a624e52b395f0e03704877b",
+      "value": {
+        "mode": "simple",
+        "value": ""
+      },
+      "name": "currentQuestionDisplay",
+      "label": "currentQuestionDisplay",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "e75c13d8a109469296dc958d1b3513af": {
+      "id": "e75c13d8a109469296dc958d1b3513af",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "introduction",
+      "label": "introduction",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "10fe82ddcee3422fb7c4b90ac6b2e673": {
+      "id": "10fe82ddcee3422fb7c4b90ac6b2e673",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "endNote",
+      "label": "endNote",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "e7b3701eddf249ce9f44789f53f8aa57": {
+      "id": "e7b3701eddf249ce9f44789f53f8aa57",
+      "value": {
+        "mode": "simple",
+        "value": "string,long,percentage"
+      },
+      "name": "textTypes",
+      "label": "textTypes",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "53d3ddbc1bd24821a6ce86c840a3ad8d": {
+      "id": "53d3ddbc1bd24821a6ce86c840a3ad8d",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentQuestionMax",
+      "label": "currentQuestionMax",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "38e91eb3217e4bd78dccd7caefa2641a": {
+      "id": "38e91eb3217e4bd78dccd7caefa2641a",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentQuestionMin",
+      "label": "currentQuestionMin",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "d845a7d9c05243609decb3c1e0547ae0": {
+      "id": "d845a7d9c05243609decb3c1e0547ae0",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentAnswerValidation",
+      "label": "currentAnswerValidation",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "3630d9f5d0a44724837d066c4acd672a": {
+      "id": "3630d9f5d0a44724837d066c4acd672a",
+      "value": {
+        "mode": "simple",
+        "value": "''"
+      },
+      "name": "currentAnswerErrorMsg",
+      "label": "currentAnswerErrorMsg",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "2d50a9cca82147d1899b4536771528c3": {
+      "id": "2d50a9cca82147d1899b4536771528c3",
+      "name": "show_attachment_question",
+      "label": "Show Attachment Question",
+      "varType": "image",
+      "category": "vaInputs"
+    },
+    "554be0e6b43c4101be1b2cab7562341e": {
+      "id": "554be0e6b43c4101be1b2cab7562341e",
+      "name": "show_date_question",
+      "label": "Show Date Question",
+      "varType": "date_time",
+      "category": "vaInputs",
+      "mode": "date"
+    },
+    "f4315814b4c54caebbc961d35d174728": {
+      "id": "f4315814b4c54caebbc961d35d174728",
+      "name": "show_datetime_question",
+      "label": "Show Datetime Question",
+      "varType": "date_time",
+      "category": "vaInputs",
+      "mode": "date_time"
+    },
+    "8cbaa293aa77475993c23001d26aa339": {
+      "id": "8cbaa293aa77475993c23001d26aa339",
+      "name": "surveyid",
+      "label": "SurveyId",
+      "defaultValue": "",
+      "varType": "string",
+      "category": "vaInputs",
+      "metadata": {
+        "libraryMappingType": "input"
+      }
+    },
+    "bc4f12c42847485abbf3909157e78b1a": {
+      "id": "bc4f12c42847485abbf3909157e78b1a",
+      "name": "verify_response",
+      "label": "Verify Response",
+      "varType": "boolean",
+      "category": "vaInputs"
+    },
+    "cc0381ffca224404b573c36d5feaae75": {
+      "id": "cc0381ffca224404b573c36d5feaae75",
+      "value": {
+        "mode": "simple",
+        "value": ""
+      },
+      "name": "surveyVerificationMsg",
+      "label": "surveyVerificationMsg",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "6ba88e09886d4c6eae94fea77067db5e": {
+      "id": "6ba88e09886d4c6eae94fea77067db5e",
+      "name": "confirmationneeded",
+      "label": "ConfirmationNeeded",
+      "defaultValue": "false",
+      "varType": "string",
+      "category": "vaInputs",
+      "metadata": {
+        "libraryMappingType": "input"
+      }
+    },
+    "377adc5bc1724b3682bb44a6ebb59d0b": {
+      "id": "377adc5bc1724b3682bb44a6ebb59d0b",
+      "value": {
+        "mode": "simple",
+        "value": "true"
+      },
+      "name": "currentQuestionMandatory",
+      "label": "currentQuestionMandatory",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "42894b70841b4879a54cdfba0fd4ab96": {
+      "id": "42894b70841b4879a54cdfba0fd4ab96",
+      "name": "savequestionstocontext",
+      "label": "SaveQuestionsToContext",
+      "defaultValue": "false",
+      "varType": "string",
+      "category": "vaInputs",
+      "metadata": {
+        "libraryMappingType": "input"
+      }
+    },
+    "c9a35e6366f34d828cf04936bfa21f0a": {
+      "id": "c9a35e6366f34d828cf04936bfa21f0a",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "_topic_postchat_user_id",
+      "label": "_topic_postchat_user_id",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "404c15db98e7403f955ad25c1cde1192": {
+      "id": "404c15db98e7403f955ad25c1cde1192",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "surveyName",
+      "label": "surveyName",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "227e4914812b4f948590e30e4974e2e5": {
+      "id": "227e4914812b4f948590e30e4974e2e5",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "LiveAgent_pre_chat_survey_name",
+      "label": "LiveAgent_pre_chat_survey_name",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "fa4ae517f3604c399e863dd879bf41af": {
+      "id": "fa4ae517f3604c399e863dd879bf41af",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "LiveAgent_post_chat_survey_name",
+      "label": "LiveAgent_post_chat_survey_name",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "2a4ea8397389433ba58b29734c1c13ca": {
+      "id": "2a4ea8397389433ba58b29734c1c13ca",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "LiveAgent_pre_assessment_instance",
+      "label": "LiveAgent_pre_assessment_instance",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "e2d3ce498d244b74a153a74bb948a96b": {
+      "id": "e2d3ce498d244b74a153a74bb948a96b",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "LiveAgent_post_assessment_instance",
+      "label": "LiveAgent_post_assessment_instance",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "090cbdb348cd4cb294583148ffa992b2": {
+      "category": "vaInputs",
+      "id": "090cbdb348cd4cb294583148ffa992b2",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    },
+    "81502465348b488bae30ece905e01413": {
+      "id": "81502465348b488bae30ece905e01413",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "defaultSurveyName",
+      "label": "defaultSurveyName",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "67f87832df654a2bbcbaf836416f13aa": {
+      "id": "67f87832df654a2bbcbaf836416f13aa",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentQuestionFieldValidator",
+      "label": "currentQuestionFieldValidator",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "85acd4f511814be192263f3144b2fa72": {
+      "id": "85acd4f511814be192263f3144b2fa72",
+      "name": "show_reference_question",
+      "label": "Show Reference Question",
+      "varType": "reference",
+      "table": "",
+      "category": "vaInputs"
+    },
+    "2ee2c1cb3b0e46eaa8c688c7fc41339e": {
+      "id": "2ee2c1cb3b0e46eaa8c688c7fc41339e",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentQuestionReferenceTable",
+      "label": "currentQuestionReferenceTable",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "8f1f29a26f8d47868e13c40b01d56aa3": {
+      "id": "8f1f29a26f8d47868e13c40b01d56aa3",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "currentQuestionReferenceCondition",
+      "label": "currentQuestionReferenceCondition",
+      "varType": "script",
+      "category": "vaVars"
+    }
+  }
+}</graph>
+        <key_phrases/>
+        <library>true</library>
+        <live_agent>false</live_agent>
+        <name>Survey Poc</name>
+        <nlu_intent/>
+        <nlu_intent_label/>
+        <nlu_model/>
+        <nlu_model_label/>
+        <nlu_provider/>
+        <palette_label/>
+        <roles/>
+        <secure_custom_input_control>false</secure_custom_input_control>
+        <source_topic_id>11d818213b77330074bc456993efc4c2</source_topic_id>
+        <sys_class_name>sys_cb_topic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 18:53:57</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>9b8b85b887a591102840eb173cbb35fa</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Survey Poc</sys_name>
+        <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+        <sys_update_name>sys_cb_topic_9b8b85b887a591102840eb173cbb35fa</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 18:54:54</sys_updated_on>
+        <triggerable_by_notification>false</triggerable_by_notification>
+        <type>TOPIC_BLOCK</type>
+        <variables/>
+    </sys_cb_topic>
+    <sys_variable_value action="delete_multiple" query="document_key=9b8b85b887a591102840eb173cbb35fa"/>
+</record_update>

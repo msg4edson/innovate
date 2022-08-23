@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_design_topic">
+    <sys_cb_design_topic action="INSERT_OR_UPDATE">
+        <compiled_topic display_value="Virtual Agent Feedback">1eff55fc87e591102840eb173cbb3554</compiled_topic>
+        <design_definition>{"type":"FlowTopic","triggers":[{"type":"Trigger","name":"38e76373681b4c91a77572e919ee4f99","triggerType":"request","applicability":{"type":"Applicability","mode":"script","value":"true"},"id":"38e76373681b4c91a77572e919ee4f99"}],"goals":[{"name":"primary","trigger_id":"38e76373681b4c91a77572e919ee4f99","nodes":[{"type":"StartGoal","goal_id":"primary","greeting_msg":{"type":"String","mode":"string","value":""},"id":"04d79da7a51342c986b0f0f8e19c41d8","name":"Start"},{"type":"TerminateGoal","goal_id":"primary","confirmation_msg":{"type":"String","mode":"string","value":""},"id":"a4efeb722e87486c9e805edca20686ba","name":"End"},{"type":"LibraryCall","library_topic_name":"Survey","library_topic_id":"26baac293b77330074bc456993efc4dd","parameter-mappings":[{"parameter-name":"surveyid","value":{"type":"String","mode":"string","value":"45c86b0eeb2330106e6b2ed628522899"},"metadata":{"type":"String","list":false,"items":[],"use_items":false}},{"parameter-name":"confirmationneeded","value":{"type":"String","mode":"string","value":"false"},"metadata":{"type":"String","list":false,"items":[],"use_items":false}},{"parameter-name":"savequestionstocontext","value":{"type":"String","mode":"string","value":"false"},"metadata":{"type":"String","list":false,"items":[],"use_items":false}}],"return-value-mappings":[],"id":"1194a2c8eddc4cd5a7499cf5de535494","name":"Survey topic block","goal_id":"primary","applicability":{"type":"Applicability","mode":"script","value":"true"}}],"edges":[{"type":"Edge","source_node_id":"04d79da7a51342c986b0f0f8e19c41d8","target_node_id":"1194a2c8eddc4cd5a7499cf5de535494","id":"741a421a5a5140dfa899ea40be2a822b"},{"type":"Edge","source_node_id":"1194a2c8eddc4cd5a7499cf5de535494","target_node_id":"a4efeb722e87486c9e805edca20686ba","id":"f3145b6fb5fd41a5a63dff4d1f0b7f7f"}],"id":"primary"}],"script_variables":[{"type":"String","name":"_topic_postchat_user_id","value":{"type":"String","mode":"string"},"list":false,"id":"8401488fdffa422fbae77b90c6617268","formatType":"text","secure":false,"sensitive":false}],"glide_variables":[{"type":"Reference","table":"sys_user","id":"6ab7de6424ee4fa3bd382db85c30833f","name":"user","formatType":"text","secure":false,"sensitive":false,"list":false}],"applicability":{"type":"Applicability","mode":"script","value":"true"},"roles":["public"],"scope":"eb7c99fb87924110b09f206f8bbb3523","domain":"global","topic_type":"SETUP_TOPIC","channels":[],"id":"d5ef55fc87e591102840eb173cbb35d9","name":"Virtual Agent Feedback","key_phrases":["Virtual Agent Feedback","Survey"," Provide Virtual Agent Feedback"],"nlu_provider":"","nlu_model":"","nlu_model_label":"","nlu_intent":"","nlu_intent_label":"","flexible_conversation_switching":false,"autopilot_topic":false,"design_categories":[],"triggerable_by_notification":false,"library":false,"readOnly":false,"nluMapping":"[]"}</design_definition>
+        <design_topic_id>d5ef55fc87e591102840eb173cbb35d9</design_topic_id>
+        <name>Virtual Agent Feedback</name>
+        <sys_class_name>sys_cb_design_topic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 20:23:10</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>16ff55fc87e591102840eb173cbb3559</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>FlowTopic</sys_name>
+        <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+        <sys_update_name>sys_cb_design_topic_16ff55fc87e591102840eb173cbb3559</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 20:23:10</sys_updated_on>
+        <type>FlowTopic</type>
+    </sys_cb_design_topic>
+</record_update>

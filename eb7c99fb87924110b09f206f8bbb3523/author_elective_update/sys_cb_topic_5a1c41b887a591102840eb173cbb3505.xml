@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic">
+    <sys_cb_topic action="DELETE">
+        <applicability/>
+        <applicability_mode>query</applicability_mode>
+        <autopilot_topic>false</autopilot_topic>
+        <category/>
+        <channels/>
+        <connect_queue/>
+        <description/>
+        <expose_on_palette>false</expose_on_palette>
+        <flexible_conversation_switching>false</flexible_conversation_switching>
+        <graph>{
+  "graph_api_version": "1.0.39",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "c7f415fb6b7348cdb6b5c145468adaa6": {
+          "id": "c7f415fb6b7348cdb6b5c145468adaa6",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "c36256eb8634481191ee5ac5a241d8a7": {
+          "id": "c36256eb8634481191ee5ac5a241d8a7",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "556381c11b304759b47011e4b4624e91": {
+          "id": "556381c11b304759b47011e4b4624e91",
+          "stepType": "ReusableTopic",
+          "name": "Survey Poc",
+          "fields": [],
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "reusableTopicChoice": "Survey Poc",
+          "reusableTopicId": "a9cbc9f887a591102840eb173cbb35f2",
+          "inputs": {
+            "surveyid": {
+              "value": [
+                {
+                  "type": "paragraph",
+                  "children": [
+                    {
+                      "text": "45c86b0eeb2330106e6b2ed628522899"
+                    }
+                  ]
+                }
+              ],
+              "mode": "string",
+              "type": "String"
+            },
+            "confirmationneeded": {
+              "value": "false",
+              "mode": "simple",
+              "type": "String"
+            },
+            "savequestionstocontext": {
+              "value": "false",
+              "mode": "simple",
+              "type": "String"
+            }
+          },
+          "variableIds": [],
+          "outputs": [],
+          "outdatedNote": false,
+          "loading": false
+        }
+      },
+      "edges": [
+        {
+          "id": "ff16ee17b6294f41988d753a565306e7",
+          "edgeType": "Edge",
+          "source": "c7f415fb6b7348cdb6b5c145468adaa6",
+          "target": "556381c11b304759b47011e4b4624e91",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "17dcf9cf78294ddab0aff20adcf4b936",
+          "edgeType": "Edge",
+          "source": "556381c11b304759b47011e4b4624e91",
+          "target": "c36256eb8634481191ee5ac5a241d8a7",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "current-user": {
+      "category": "vaInputs",
+      "id": "current-user",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    },
+    "64e31d93357140908a9528dbe0d7b350": {
+      "id": "64e31d93357140908a9528dbe0d7b350",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "_topic_postchat_user_id",
+      "label": "_topic_postchat_user_id",
+      "varType": "script",
+      "category": "vaVars"
+    }
+  }
+}</graph>
+        <key_phrases>Virtual Agent Feedback,Survey</key_phrases>
+        <library>false</library>
+        <live_agent>false</live_agent>
+        <name>Virtual Agent Feedback</name>
+        <nlu_intent/>
+        <nlu_intent_label/>
+        <nlu_model/>
+        <nlu_model_label/>
+        <nlu_provider/>
+        <palette_label/>
+        <roles>public</roles>
+        <secure_custom_input_control>false</secure_custom_input_control>
+        <source_topic_id/>
+        <sys_class_name>sys_cb_topic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 18:56:20</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>5a1c41b887a591102840eb173cbb3505</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Virtual Agent Feedback</sys_name>
+        <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+        <sys_update_name>sys_cb_topic_5a1c41b887a591102840eb173cbb3505</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 20:07:40</sys_updated_on>
+        <triggerable_by_notification>false</triggerable_by_notification>
+        <type>SETUP_TOPIC</type>
+        <variables/>
+    </sys_cb_topic>
+    <sys_variable_value action="DELETE" query="document_key=5a1c41b887a591102840eb173cbb3505"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</application>
+        <file_path/>
+        <instance_id>ec6803d5dbcef3080b9d21c4059619fe</instance_id>
+        <instance_name>dev87223</instance_name>
+        <name>sys_cb_topic_5a1c41b887a591102840eb173cbb3505</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic"><sys_cb_topic action="INSERT_OR_UPDATE"><applicability/><applicability_mode>query</applicability_mode><autopilot_topic>false</autopilot_topic><category/><channels/><connect_queue/><description/><expose_on_palette>false</expose_on_palette><flexible_conversation_switching>false</flexible_conversation_switching><graph>{
+  "graph_api_version": "1.0.39",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "c7f415fb6b7348cdb6b5c145468adaa6": {
+          "id": "c7f415fb6b7348cdb6b5c145468adaa6",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "c36256eb8634481191ee5ac5a241d8a7": {
+          "id": "c36256eb8634481191ee5ac5a241d8a7",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "556381c11b304759b47011e4b4624e91": {
+          "id": "556381c11b304759b47011e4b4624e91",
+          "stepType": "ReusableTopic",
+          "name": "Survey Poc",
+          "fields": [],
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "reusableTopicChoice": "Survey Poc",
+          "reusableTopicId": "a9cbc9f887a591102840eb173cbb35f2",
+          "inputs": {
+            "surveyid": {
+              "value": [
+                {
+                  "type": "paragraph",
+                  "children": [
+                    {
+                      "text": "45c86b0eeb2330106e6b2ed628522899"
+                    }
+                  ]
+                }
+              ],
+              "mode": "string",
+              "type": "String"
+            },
+            "confirmationneeded": {
+              "value": "false",
+              "mode": "simple",
+              "type": "String"
+            },
+            "savequestionstocontext": {
+              "value": "false",
+              "mode": "simple",
+              "type": "String"
+            }
+          },
+          "variableIds": [],
+          "outputs": [],
+          "outdatedNote": false,
+          "loading": false
+        }
+      },
+      "edges": [
+        {
+          "id": "ff16ee17b6294f41988d753a565306e7",
+          "edgeType": "Edge",
+          "source": "c7f415fb6b7348cdb6b5c145468adaa6",
+          "target": "556381c11b304759b47011e4b4624e91",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "17dcf9cf78294ddab0aff20adcf4b936",
+          "edgeType": "Edge",
+          "source": "556381c11b304759b47011e4b4624e91",
+          "target": "c36256eb8634481191ee5ac5a241d8a7",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "current-user": {
+      "category": "vaInputs",
+      "id": "current-user",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    },
+    "64e31d93357140908a9528dbe0d7b350": {
+      "id": "64e31d93357140908a9528dbe0d7b350",
+      "value": {
+        "value": "",
+        "mode": "simple"
+      },
+      "name": "_topic_postchat_user_id",
+      "label": "_topic_postchat_user_id",
+      "varType": "script",
+      "category": "vaVars"
+    }
+  }
+}</graph><key_phrases>Virtual Agent Feedback,Survey</key_phrases><library>false</library><live_agent>false</live_agent><name>Virtual Agent Feedback</name><nlu_intent/><nlu_intent_label/><nlu_model/><nlu_model_label/><nlu_provider/><palette_label/><roles>public</roles><secure_custom_input_control>false</secure_custom_input_control><source_topic_id/><sys_class_name>sys_cb_topic</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-08-23 18:56:20</sys_created_on><sys_domain>global</sys_domain><sys_id>5a1c41b887a591102840eb173cbb3505</sys_id><sys_mod_count>5</sys_mod_count><sys_name>Virtual Agent Feedback</sys_name><sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package><sys_policy/><sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope><sys_update_name>sys_cb_topic_5a1c41b887a591102840eb173cbb3505</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-08-23 20:07:40</sys_updated_on><triggerable_by_notification>false</triggerable_by_notification><type>SETUP_TOPIC</type><variables/></sys_cb_topic><sys_variable_value action="delete_multiple" query="document_key=5a1c41b887a591102840eb173cbb3505"/></record_update>]]></payload>
+        <payload_hash>-1434395795</payload_hash>
+        <record_name>Virtual Agent Feedback</record_name>
+        <reverted_from/>
+        <source>8b52f8e7879511102840eb173cbb35b4</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 20:07:40</sys_created_on>
+        <sys_id>9b6cddb887e591102840eb173cbb3533</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>182cc515d460000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 20:07:40</sys_updated_on>
+        <type>Topic</type>
+        <update_guid>936cddb86de59110360c9c9439637633</update_guid>
+        <update_guid_history>936cddb86de59110360c9c9439637633:-1434395795,38655934f8e5911056dca1576fd29b31:1810660622,01b419f044e591109eba8c1e0b88f832:156459065,0541117086e59110d0225e98fa20d0b3:894227787,4fdc0d3c96a5911021fe82735a551f85:1849386996,d21c413c3ba591101ab7507be9f5e306:2069894629</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 20:12:10</sys_created_on>
+        <sys_db_object display_value="" name="sys_cb_topic">sys_cb_topic</sys_db_object>
+        <sys_id>23f8964d18944d408caacc65f0c65640</sys_id>
+        <sys_metadata>5a1c41b887a591102840eb173cbb3505</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Virtual Agent Feedback</sys_name>
+        <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+        <sys_scope_delete display_value="">3d3318dcc09f4774aa1caa4e24c61dc4</sys_scope_delete>
+        <sys_update_name>sys_cb_topic_5a1c41b887a591102840eb173cbb3505</sys_update_name>
+        <sys_update_version display_value="sys_cb_topic_5a1c41b887a591102840eb173cbb3505">9b6cddb887e591102840eb173cbb3533</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 20:12:10</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

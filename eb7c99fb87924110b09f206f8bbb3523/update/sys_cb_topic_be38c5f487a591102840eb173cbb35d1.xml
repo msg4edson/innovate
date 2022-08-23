@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic">
+    <sys_cb_topic action="INSERT_OR_UPDATE">
+        <applicability/>
+        <applicability_mode>query</applicability_mode>
+        <autopilot_topic>false</autopilot_topic>
+        <category/>
+        <channels/>
+        <connect_queue/>
+        <description>Presents an ending message to the user when the conversation is done.</description>
+        <expose_on_palette>false</expose_on_palette>
+        <flexible_conversation_switching>false</flexible_conversation_switching>
+        <graph>{
+  "graph_api_version": "1.0.39",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "7e1c6cb8d2f449209da8bec0eeff08af": {
+          "id": "7e1c6cb8d2f449209da8bec0eeff08af",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "542306aa3c3440359dd82f144998c973": {
+          "id": "542306aa3c3440359dd82f144998c973",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "7007ea7551f44775bf496cac8517ea4f": {
+          "id": "7007ea7551f44775bf496cac8517ea4f",
+          "stepType": "TextOutput",
+          "name": "Closing Message",
+          "secure": false,
+          "value": {
+            "value": "(function execute() {\n    return vaSystem.getClosingMessage();\n})()\n",
+            "mode": "script"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "5c8b568570e24cbe8f6ed4ee89485669": {
+          "id": "5c8b568570e24cbe8f6ed4ee89485669",
+          "name": "Close Conversation",
+          "script": "(function execute() {\n    vaSystem.endConversation();\n})()\n",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "2f4c375f8d594afdaf0b832876d95ce4": {
+          "id": "2f4c375f8d594afdaf0b832876d95ce4",
+          "stepType": "TextOutput",
+          "name": "Print",
+          "secure": false,
+          "value": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "Vamos por aqui uma survey"
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "7e6f2af4def949a5bc17366328fa27e4": {
+          "id": "7e6f2af4def949a5bc17366328fa27e4",
+          "stepType": "TextOutput",
+          "name": "printLastTopic",
+          "secure": false,
+          "value": {
+            "value": "(function execute() {\n\n    var lastTopic = vaVars.topic_anterior;\n    return 'Last Topic: ' + lastTopic;\n})()\n",
+            "mode": "script"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "82a174b81290482693dcaf274acc17f3": {
+          "id": "82a174b81290482693dcaf274acc17f3",
+          "name": "lastTopic",
+          "script": "(function execute() {\n    vaVars.topic_anterior = JSON.parse(vaVars._topic_current).name;\n    //vaVars._topic_current = null;\n})()",
+          "stepType": "ScriptAction",
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        }
+      },
+      "edges": [
+        {
+          "id": "2c70d764fe334a639e3507ac8ea5eb72",
+          "edgeType": "Edge",
+          "source": "7007ea7551f44775bf496cac8517ea4f",
+          "target": "5c8b568570e24cbe8f6ed4ee89485669",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "8efdf5e58f0d4d7f9d39e141719dedb2",
+          "edgeType": "Edge",
+          "source": "5c8b568570e24cbe8f6ed4ee89485669",
+          "target": "542306aa3c3440359dd82f144998c973",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "846e6a8c3a114f57bd18401fe8053750",
+          "edgeType": "Edge",
+          "source": "7e1c6cb8d2f449209da8bec0eeff08af",
+          "target": "2f4c375f8d594afdaf0b832876d95ce4",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "811bfac8ab0a496fbda57ec65561fe9a",
+          "edgeType": "Edge",
+          "source": "7e6f2af4def949a5bc17366328fa27e4",
+          "target": "7007ea7551f44775bf496cac8517ea4f",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "d1b3d00f8c5f49df8e49aecd1b49a264",
+          "edgeType": "Edge",
+          "source": "2f4c375f8d594afdaf0b832876d95ce4",
+          "target": "82a174b81290482693dcaf274acc17f3",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "ab3ef814d4424c3a8e198b7b54bef954",
+          "edgeType": "Edge",
+          "source": "82a174b81290482693dcaf274acc17f3",
+          "target": "7e6f2af4def949a5bc17366328fa27e4",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "current-user": {
+      "category": "vaInputs",
+      "id": "current-user",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    }
+  }
+}</graph>
+        <key_phrases>Closing Conversation</key_phrases>
+        <library>false</library>
+        <live_agent>false</live_agent>
+        <name>Closing Conversation</name>
+        <nlu_intent/>
+        <nlu_intent_label/>
+        <nlu_model/>
+        <nlu_model_label/>
+        <nlu_provider/>
+        <palette_label/>
+        <roles>public</roles>
+        <secure_custom_input_control>false</secure_custom_input_control>
+        <source_topic_id/>
+        <sys_class_name>sys_cb_topic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-08-23 18:39:27</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>be38c5f487a591102840eb173cbb35d1</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Closing Conversation</sys_name>
+        <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
+        <sys_update_name>sys_cb_topic_be38c5f487a591102840eb173cbb35d1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-08-23 20:33:17</sys_updated_on>
+        <triggerable_by_notification>false</triggerable_by_notification>
+        <type>SETUP_TOPIC</type>
+        <variables/>
+    </sys_cb_topic>
+    <sys_variable_value action="delete_multiple" query="document_key=be38c5f487a591102840eb173cbb35d1"/>
+</record_update>
