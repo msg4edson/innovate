@@ -74,7 +74,46 @@
                 "type": "paragraph",
                 "children": [
                   {
-                    "text": "Vamos por aqui uma survey"
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "trans: "
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.transcript}}",
+                      "displayValue": "Script Variables➛transcript"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
                   }
                 ]
               }
@@ -86,24 +125,153 @@
             "mode": "query"
           }
         },
-        "7e6f2af4def949a5bc17366328fa27e4": {
-          "id": "7e6f2af4def949a5bc17366328fa27e4",
+        "9db5fa9c27594b01b942e61623d7206d": {
+          "id": "9db5fa9c27594b01b942e61623d7206d",
+          "stepType": "Decision",
+          "name": "Decision"
+        },
+        "4d4e1b87bf2b49fba3871f7b67e3f647": {
+          "id": "4d4e1b87bf2b49fba3871f7b67e3f647",
           "stepType": "TextOutput",
-          "name": "printLastTopic",
+          "name": "true",
           "secure": false,
           "value": {
-            "value": "(function execute() {\n\n    var lastTopic = vaVars.topic_anterior;\n    return 'Last Topic: ' + lastTopic;\n})()\n",
-            "mode": "script"
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "testPrint: "
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.testprint}}",
+                      "displayValue": "Script Variables➛testprint"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
           },
           "applicability": {
             "value": "",
             "mode": "query"
           }
         },
-        "82a174b81290482693dcaf274acc17f3": {
-          "id": "82a174b81290482693dcaf274acc17f3",
-          "name": "lastTopic",
-          "script": "(function execute() {\n    vaVars.topic_anterior = JSON.parse(vaVars._topic_current).name;\n    //vaVars._topic_current = null;\n})()",
+        "2875eb9cc98f4f4698adc2f8e214840f": {
+          "id": "2875eb9cc98f4f4698adc2f8e214840f",
+          "stepType": "TextOutput",
+          "name": "false",
+          "secure": false,
+          "value": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "testPrint:"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.testprint}}",
+                      "displayValue": "Script Variables➛testprint"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          }
+        },
+        "05378bb7411f4f5ab2a84f4c732549f9": {
+          "id": "05378bb7411f4f5ab2a84f4c732549f9",
+          "stepType": "TextOutput",
+          "name": "testprint",
+          "secure": false,
+          "value": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "testprint: "
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaVars.testprint}}",
+                      "displayValue": "Script Variables➛testprint"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "applicability": {
+            "mode": "query",
+            "value": ""
+          }
+        },
+        "b689ffd407734d89b717df6d2b88e5d5": {
+          "id": "b689ffd407734d89b717df6d2b88e5d5",
+          "name": "Go to Virtual Agent Feedback",
+          "script": "(function execute() {\n    /* Code your scripted action here. For example, you might update a\n       record based on conditional logic:\n\n        if (vaVars.my_flag == 'say hello') {\n            gs.info('hi there');\n        } else {\n            gs.info('bye now');\n        }\n    */\n    vaSystem.switchTopic('Virtual Agent Feedback');\n})()\n",
           "stepType": "ScriptAction",
           "applicability": {
             "value": "",
@@ -112,6 +280,35 @@
         }
       },
       "edges": [
+        {
+          "id": "c3ebc7c655df4919a48895eab5bb666a",
+          "edgeType": "Edge",
+          "source": "05378bb7411f4f5ab2a84f4c732549f9",
+          "target": "9db5fa9c27594b01b942e61623d7206d",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "07854333beaa4a42920f63d98a636ee2",
+          "edgeType": "Branch",
+          "source": "9db5fa9c27594b01b942e61623d7206d",
+          "target": "4d4e1b87bf2b49fba3871f7b67e3f647",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    /* Return true or false to indicate the branch condition's applicability.\n       For example:\n\n       var applies = vaInputs.first_name == 'Bill' ? true : false;\n       return applies;\n    */\n    if (vaVars.testprint == true) {\n        return true;\n    } else {\n        return false;\n    }\n})()\n"
+          },
+          "label": "true"
+        },
+        {
+          "id": "d1b3d00f8c5f49df8e49aecd1b49a264",
+          "edgeType": "Edge",
+          "source": "2f4c375f8d594afdaf0b832876d95ce4",
+          "target": "7007ea7551f44775bf496cac8517ea4f",
+          "sourcePort": "",
+          "targetPort": ""
+        },
         {
           "id": "2c70d764fe334a639e3507ac8ea5eb72",
           "edgeType": "Edge",
@@ -129,34 +326,47 @@
           "targetPort": ""
         },
         {
-          "id": "846e6a8c3a114f57bd18401fe8053750",
+          "id": "49f55cd35249407d89dcabdcf2f5b875",
           "edgeType": "Edge",
-          "source": "7e1c6cb8d2f449209da8bec0eeff08af",
+          "source": "4d4e1b87bf2b49fba3871f7b67e3f647",
           "target": "2f4c375f8d594afdaf0b832876d95ce4",
           "sourcePort": "",
           "targetPort": ""
         },
         {
-          "id": "811bfac8ab0a496fbda57ec65561fe9a",
+          "id": "f2e40451c3784454a8ff3235c42d31fb",
+          "edgeType": "Branch",
+          "source": "9db5fa9c27594b01b942e61623d7206d",
+          "target": "2875eb9cc98f4f4698adc2f8e214840f",
+          "sourcePort": "",
+          "targetPort": "",
+          "expression": {
+            "mode": "script",
+            "value": "(function execute() {\n    /* Return true or false to indicate the branch condition's applicability.\n       For example:\n\n       var applies = vaInputs.first_name == 'Bill' ? true : false;\n       return applies;\n    */\n    if (vaVars.testprint == false) {\n        return true;\n    } else {\n        return false;\n    }\n})()\n"
+          },
+          "label": "false"
+        },
+        {
+          "id": "846e6a8c3a114f57bd18401fe8053750",
           "edgeType": "Edge",
-          "source": "7e6f2af4def949a5bc17366328fa27e4",
-          "target": "7007ea7551f44775bf496cac8517ea4f",
+          "source": "7e1c6cb8d2f449209da8bec0eeff08af",
+          "target": "05378bb7411f4f5ab2a84f4c732549f9",
           "sourcePort": "",
           "targetPort": ""
         },
         {
-          "id": "d1b3d00f8c5f49df8e49aecd1b49a264",
+          "id": "546f838d99bf4c65b67ebbf846c40202",
           "edgeType": "Edge",
-          "source": "2f4c375f8d594afdaf0b832876d95ce4",
-          "target": "82a174b81290482693dcaf274acc17f3",
+          "source": "2875eb9cc98f4f4698adc2f8e214840f",
+          "target": "b689ffd407734d89b717df6d2b88e5d5",
           "sourcePort": "",
           "targetPort": ""
         },
         {
-          "id": "ab3ef814d4424c3a8e198b7b54bef954",
+          "id": "70597d583d49410c8c6b1674f4889479",
           "edgeType": "Edge",
-          "source": "82a174b81290482693dcaf274acc17f3",
-          "target": "7e6f2af4def949a5bc17366328fa27e4",
+          "source": "b689ffd407734d89b717df6d2b88e5d5",
+          "target": "2f4c375f8d594afdaf0b832876d95ce4",
           "sourcePort": "",
           "targetPort": ""
         }
@@ -171,6 +381,28 @@
       "name": "user",
       "table": "sys_user",
       "varType": "reference"
+    },
+    "aaf45f02444e4aa89ed0b5c224db53a1": {
+      "id": "aaf45f02444e4aa89ed0b5c224db53a1",
+      "value": {
+        "mode": "script",
+        "value": "(function execute() {\n    /* return 'a default value'; */\n    var transcript = vaSystem.getTranscript();\n    return transcript;\n})()\n"
+      },
+      "name": "transcript",
+      "label": "transcript",
+      "varType": "script",
+      "category": "vaVars"
+    },
+    "0d936991eed046e58b33b913a8b58f70": {
+      "id": "0d936991eed046e58b33b913a8b58f70",
+      "value": {
+        "mode": "script",
+        "value": "(function execute() {\n    /* Code your scripted action here. For example, you might update a\n       record based on conditional logic:\n\n        if (vaVars.my_flag == 'say hello') {\n            gs.info('hi there');\n        } else {\n            gs.info('bye now');\n        }\n    */\n    //var topic = vaVars.transcript;\n    var trans = vaSystem.getTranscript().toString();\n    var regex = /How was your experience chatting with me today/\n    var testprint = trans.match(regex);\n    //return testprint.toString();\n    \n    if (testprint == 'How was your experience chatting with me today') {\n        return true;\n    } else {\n        return false;\n    }\n})()"
+      },
+      "name": "testprint",
+      "label": "testprint",
+      "varType": "script",
+      "category": "vaVars"
     }
   }
 }</graph>
@@ -192,14 +424,14 @@
         <sys_created_on>2022-08-23 18:39:27</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_id>be38c5f487a591102840eb173cbb35d1</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>63</sys_mod_count>
         <sys_name>Closing Conversation</sys_name>
         <sys_package display_value="Innovate" source="x_777497_innovate">eb7c99fb87924110b09f206f8bbb3523</sys_package>
         <sys_policy/>
         <sys_scope display_value="Innovate">eb7c99fb87924110b09f206f8bbb3523</sys_scope>
         <sys_update_name>sys_cb_topic_be38c5f487a591102840eb173cbb35d1</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-08-23 20:33:17</sys_updated_on>
+        <sys_updated_on>2022-08-24 04:24:17</sys_updated_on>
         <triggerable_by_notification>false</triggerable_by_notification>
         <type>SETUP_TOPIC</type>
         <variables/>
